@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE =edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- <script src="/encoder/esc-pos-encoder.js"></script> -->
+        <script src="https://raw.githubusercontent.com/NielsLeenheer/EscPosEncoder/master/dist/esc-pos-encoder.js"></script>
+    </head>
+
+    <body class="m-5">
+
+        <div class="relative px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl pt-12 pb-20 sm:pt-32 sm:pb-32">
+                <div>
+                    <div class=" sm:mb-8 sm:flex sm:justify-center">
+                        <div id="connectionStatus" class="hidden relative overflow-hidden rounded-full py-1.5 px-4 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                            <span class="text-gray-600">
+                                <span id="connectionStatusText"></span>
+                                <a id="disconnectButton" href="#" class="font-semibold text-red-600">
+                                    <span class="absolute inset-0" aria-hidden="true"></span>Disconnect <span aria-hidden="true">&rarr;</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h1 class="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl">Printing Receipts with Javascript</h1>
+                        <p class="mt-6 text-lg leading-8 text-gray-600 sm:text-center">With a few lines of javascript, you can send commands to a USB thermal printer to print receipts. This can be useful for printing tardy slips, event receipts, etc.</p>
+                        <div class="mt-8 flex gap-x-4 sm:justify-center">
+                            <a id="connectButton" href="#" class="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700">
+                                Connect to printer
+                            </a>
+
+                            <a id="printButton" href="#" class="hidden inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-gray-900 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                                Print Example
+                            </a>
+                            <a id="disconnectButton" href="#" class="hidden inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-gray-900 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                                Print Example
+                            </a>
+                        </div>
+                    </div>
+                    <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+                        <svg class="relative left-[calc(50%+3rem)] h-[21.1875rem] max-w-none -translate-x-1/2 sm:left-[calc(50%+36rem)] sm:h-[42.375rem]" viewBox="0 0 1155 678" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="url(#ecb5b0c9-546c-4772-8c71-4d3f06d544bc)" fill-opacity=".3" d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z" />
+                            <defs>
+                                <linearGradient id="ecb5b0c9-546c-4772-8c71-4d3f06d544bc" x1="1155.49" x2="-78.208" y1=".177" y2="474.645" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#9089FC"></stop>
+                                    <stop offset="1" stop-color="#FF80B5"></stop>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="mx-auto max-w-7xl divide-y-2 divide-gray-200 py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900">Frequently asked questions</h2>
+                <div class="mt-6 pt-10">
+                    <dl class="space-y-10 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12 md:space-y-0">
+                        <div>
+                            <dt class="text-lg font-medium leading-6 text-gray-900">What hardware to I need?</dt>
+                            <dd class="mt-2 text-base text-gray-500">A Chromebook and a thermal printer that is compatible with USB. There are many options available on Amazon for as low as $60, but it may be worth considering a higher-end printer once you have progressed beyond the research and development stage.</dd>
+                        </div>
+
+                        <div>
+                            <dt class="text-lg font-medium leading-6 text-gray-900">What are the program dependancies?</dt>
+                            <dd class="mt-2 text-base text-gray-500">A little Javascript knowledge and a library to convert ESC/POS commands (<a class="text-blue-600" href="https://www.npmjs.com/package/esc-pos-encoder">https://www.npmjs.com/package/esc-pos-encoder</a>). The application does need run from a secure site (https).</dd>
+                        </div>
+
+                        <div>
+                            <dt class="text-lg font-medium leading-6 text-gray-900">Do I need to install print drivers?</dt>
+                            <dd class="mt-2 text-base text-gray-500"><strong>NO!</strong> Thermal printers do not require print drivers because Chrome implements the WEBUSB API which allows for direct communication between the printer and the Javascript application. This makes it easy to get started with thermal printing without having to install any additional software.</dd>
+                        </div>
+
+                        <div>
+                            <dt class="text-lg font-medium leading-6 text-gray-900">What are the average costs for ink?</dt>
+                            <dd class="mt-2 text-base text-gray-500 space-y-3">
+                                <p>There are no ink costs. Thermal printers are fast, quiet, and inexpensive to maintain as they do not need ink or toner cartridges.</p>
+                            </dd>
+                            </p>
+                        </div>
+
+                        <div>
+                            <dt class="text-lg font-medium leading-6 text-gray-900">Can I print more than simple text?</dt>
+                            <dd class="mt-2 text-base text-gray-500 space-y-3">
+                                <p>Yes. There are librarys to print QR Codes, barcodes, and images.</p>
+                            </dd>
+                            </p>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            let device;
+            const connectButton = document.getElementById('connectButton');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionStatusText = document.getElementById('connectionStatusText');
+            const printButton = document.getElementById('printButton');
+            const disconnectButton = document.getElementById('disconnectButton');
+
+            if (localStorage.getItem('device')) {
+                navigator.usb.getDevices().then(async (devices) => {
+                    const localDevice = JSON.parse(localStorage.getItem('device'));
+                    device = devices.find(d => d.productId === localDevice.productId && d.vendorId === localDevice.vendorId);
+
+                    if (!device) {
+                        throw new Error(`No device was found with vendorId ${localStorage.getItem('device').vendorId} and producdId ${localStorage.getItem('device').productId}.`);
+                    }
+
+                    await connectToDevice();
+                });
+            }
+
+            async function connectToDevice() {
+                await device.open();
+                await device.selectConfiguration(1);
+                await device.claimInterface(0);
+
+                localStorage.setItem('device', JSON.stringify({ productId: device.productId, vendorId: device.vendorId }));
+
+                console.log(device);
+
+                updateGUI();
+            }
+
+            function updateGUI() {
+                connectButton.classList.add('hidden');
+
+                connectionStatusText.innerHTML = `Connected to ${device.productName}`;
+                connectionStatus.classList.remove('hidden');
+
+                printButton.classList.remove('hidden');
+
+                disconnectButton.classList.remove('hidden');
+            }
+
+            connectButton.onclick = async () => {
+                device = await navigator.usb.requestDevice({
+                    filters: []
+                });
+
+                await connectToDevice();
+            };
+
+            disconnectButton.onclick = () => {
+                localStorage.removeItem('device');
+                location.reload();
+            };
+
+            printButton.onclick = () => print();
+
+            function print() {
+                const endPoint = device.configuration
+                    .interfaces[0].alternate
+                    .endpoints.find((endPoint) => endPoint.direction === 'out').endpointNumber;
+
+                device.transferOut(endPoint, getPrintCommands());
+            }
+
+            function getPrintCommands() {
+                let encoder = new EscPosEncoder();
+
+                return encoder
+                    .initialize()
+                    .newline()
+                    .text('The quick brown fox jumps over the lazy dog')
+                    .newline()
+                    .qrcode('https://fcps.net')
+                    .newline()
+                    .newline()
+                    .newline()
+                    .newline()
+                    .newline()
+                    .newline()
+                    .cut('partial')
+                    .encode();
+            }
+        </script>
+    </body>
+
+</html>
